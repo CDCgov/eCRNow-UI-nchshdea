@@ -3,7 +3,7 @@ import {
     Alert,
     Row,
     Col,
-    Form, Card, Accordion, Button,Table
+    Form, Card, Accordion, Button, Table
 } from 'react-bootstrap';
 import './PublicHealthAuthority.css';
 import { store } from 'react-notifications-component';
@@ -15,22 +15,22 @@ class PublicHealthAuthority extends Component {
         super(props);
         this.state = {
             validated: false,
-            isValidated:false,
+            isValidated: false,
             isChecked: false,
         };
         this.selectedPublicHealthAuthority = this.props.selectedPublicHealthAuthority;
         console.log(this.props.addNewHealthAuthority);
         const propType = typeof this.props.addNewHealthAuthority;
-        if(propType === "boolean"){
+        if (propType === "boolean") {
             this.addNewHealthAuthority = this.props.addNewHealthAuthority ? this.props.addNewHealthAuthority : false;
         } else {
             this.addNewHealthAuthority = this.props.addNewHealthAuthority ? this.props.addNewHealthAuthority.addNewHealthAuthority : false;
         }
-        
+
         console.log(this.addNewHealthAuthority);
         console.log(this.selectedPublicHealthAuthority);
         if (!this.addNewHealthAuthority && !this.isEmpty(this.selectedPublicHealthAuthority)) {
-          console.log("Inside If")
+            console.log("Inside If")
             this.state.authType = this.selectedPublicHealthAuthority.authType;
             this.state.clientId = this.selectedPublicHealthAuthority.clientId;
             this.state.clientSecret = this.selectedPublicHealthAuthority.clientSecret;
@@ -41,7 +41,8 @@ class PublicHealthAuthority extends Component {
             this.state.fhirServerBaseURL = this.selectedPublicHealthAuthority.fhirServerBaseURL;
             this.state.tokenEndpoint = this.selectedPublicHealthAuthority.tokenUrl;
             this.state.scopes = this.selectedPublicHealthAuthority.scopes;
-            this.state.restAPIURL= this.selectedPublicHealthAuthority.restApiUrl;
+            this.state.restAPIURL = this.selectedPublicHealthAuthority.restApiUrl;
+            this.state.keystoreAlias = this.selectedPublicHealthAuthority.backendAuthKeyAlias;
         } else {
             this.state.authType = 'SofProvider';
         }
@@ -70,7 +71,7 @@ class PublicHealthAuthority extends Component {
 
     handleRadioChange(e) {
         this.setState({
-          authType: e.target.value
+            authType: e.target.value
         });
     }
 
@@ -98,7 +99,7 @@ class PublicHealthAuthority extends Component {
         console.log(this.state);
     }
 
-    handleCheckboxChange(e,rowData){
+    handleCheckboxChange(e, rowData) {
         console.log(e.target.checked);
         console.log(rowData);
     }
@@ -123,16 +124,17 @@ class PublicHealthAuthority extends Component {
         var PublicHealthAuthority = {
             authType: this.state.authType,
             clientId: this.state.clientId,
-            clientSecret: this.state.clientSecret && this.state.authType === 'SofSystem' ? this.state.clientSecret : null,
+            clientSecret: this.state.clientSecret && this.state.authType === 'System' ? this.state.clientSecret : null,
             username: this.state.username,
             password: this.state.password,
             fhirServerBaseURL: this.state.fhirServerBaseURL,
             tokenUrl: this.state.tokenEndpoint ? this.state.tokenEndpoint : null,
             scopes: this.state.scopes,
-            lastUpdated:new Date()
+            backendAuthKeyAlias: this.state.keystoreAlias ? this.state.keystoreAlias : null,
+            lastUpdated: new Date()
         };
         if (!this.addNewHealthAuthority && this.selectedPublicHealthAuthority) {
-          PublicHealthAuthority['id'] = this.selectedPublicHealthAuthority.id;
+            PublicHealthAuthority['id'] = this.selectedPublicHealthAuthority.id;
             requestMethod = 'PUT';
         } else {
             requestMethod = 'POST';
@@ -267,7 +269,7 @@ class PublicHealthAuthority extends Component {
                             dismissible
                         >
                             Public Health Authority are saved successfully.
-        </Alert>
+                        </Alert>
                         <Form noValidate validated={this.state.validated} onSubmit={handleSubmit} >
                             <Accordion defaultActiveKey="0">
                                 <Card className="accordionCards">
@@ -290,7 +292,7 @@ class PublicHealthAuthority extends Component {
                                                         </Col>
                                                         <Col sm={4}>
                                                             <Form.Check type="radio" id="systemLaunch">
-                                                                <Form.Check.Input type="radio" checked={this.state.authType === 'SofSystem'} value="SofSystem" onChange={e => this.handleRadioChange(e)} />
+                                                                <Form.Check.Input type="radio" checked={this.state.authType === 'System'} value="System" onChange={e => this.handleRadioChange(e)} />
                                                                 <Form.Check.Label>System Launch</Form.Check.Label>
                                                             </Form.Check>
                                                         </Col>
@@ -308,7 +310,7 @@ class PublicHealthAuthority extends Component {
                                                     Client Id:
                                                 </Form.Label>
                                                 <Col sm={10}>
-                                                    <Form.Control type="text" placeholder="ClientId" name="clientId" required={this.state.authType !== 'UserNamePwd' ? true : false} onChange={e => this.handleChange(e)} value={this.state.clientId} isInvalid={this.state.isValidated && (this.state.clientId === '' || this.state.clientId === undefined)}/>
+                                                    <Form.Control type="text" placeholder="ClientId" name="clientId" required={this.state.authType !== 'UserNamePwd' ? true : false} onChange={e => this.handleChange(e)} value={this.state.clientId} isInvalid={this.state.isValidated && (this.state.clientId === '' || this.state.clientId === undefined)} />
                                                     <Form.Control.Feedback type="invalid">
                                                         Please provide a Client Id.
                                                     </Form.Control.Feedback>
@@ -321,7 +323,7 @@ class PublicHealthAuthority extends Component {
                                                         Client Secret:
                                                     </Form.Label>
                                                     <Col sm={10}>
-                                                        <Form.Control type="text" placeholder="Client Secret" name="clientSecret" required={this.state.authType !== 'UserNamePwd' ? true : false} onChange={e => this.handleChange(e)} value={this.state.clientSecret} isInvalid={this.state.isValidated && (this.state.clientSecret === '' || this.state.clientSecret === undefined)}/>
+                                                        <Form.Control type="text" placeholder="Client Secret" name="clientSecret" required={this.state.authType !== 'UserNamePwd' ? true : false} onChange={e => this.handleChange(e)} value={this.state.clientSecret} isInvalid={this.state.isValidated && (this.state.clientSecret === '' || this.state.clientSecret === undefined)} />
                                                         <Form.Control.Feedback type="invalid">
                                                             Please provide a Client Secret.
                                                         </Form.Control.Feedback>
@@ -330,37 +332,37 @@ class PublicHealthAuthority extends Component {
                                             ) : ''}
 
                                             {this.state.authType === 'UserNamePwd' ? (
-                                            <Form.Group as={Row} controlId="formHorizontalUsername">
-                                                <Form.Label column sm={2}>
-                                                    Username:
-                                                </Form.Label>
-                                                <Col sm={10}>
-                                                    <Form.Control type="text" placeholder="Username" name="username" required onChange={e => this.handleChange(e)} value={this.state.username} />
-                                                    <Form.Control.Feedback type="invalid">
-                                                        Please provide a Username.
-                                                    </Form.Control.Feedback>
-                                                </Col>
-                                            </Form.Group> ) : ''}
+                                                <Form.Group as={Row} controlId="formHorizontalUsername">
+                                                    <Form.Label column sm={2}>
+                                                        Username:
+                                                    </Form.Label>
+                                                    <Col sm={10}>
+                                                        <Form.Control type="text" placeholder="Username" name="username" required onChange={e => this.handleChange(e)} value={this.state.username} />
+                                                        <Form.Control.Feedback type="invalid">
+                                                            Please provide a Username.
+                                                        </Form.Control.Feedback>
+                                                    </Col>
+                                                </Form.Group>) : ''}
 
                                             {this.state.authType === 'UserNamePwd' ? (
-                                            <Form.Group as={Row} controlId="formHorizontalPassword">
-                                                <Form.Label column sm={2}>
-                                                    Password:
-                                                </Form.Label>
-                                                <Col sm={10}>
-                                                    <Form.Control type="password" placeholder="Password" name="password" required onChange={e => this.handleChange(e)} value={this.state.password} />
-                                                    <Form.Control.Feedback type="invalid">
-                                                        Please provide a Password.
-                                                    </Form.Control.Feedback>
-                                                </Col>
-                                            </Form.Group>) : ''}
+                                                <Form.Group as={Row} controlId="formHorizontalPassword">
+                                                    <Form.Label column sm={2}>
+                                                        Password:
+                                                    </Form.Label>
+                                                    <Col sm={10}>
+                                                        <Form.Control type="password" placeholder="Password" name="password" required onChange={e => this.handleChange(e)} value={this.state.password} />
+                                                        <Form.Control.Feedback type="invalid">
+                                                            Please provide a Password.
+                                                        </Form.Control.Feedback>
+                                                    </Col>
+                                                </Form.Group>) : ''}
 
                                             <Form.Group as={Row} controlId="formHorizontalScopes">
                                                 <Form.Label column sm={2}>
                                                     Scopes:
                                                 </Form.Label>
                                                 <Col sm={10}>
-                                                    <Form.Control as="textarea" rows="3" name="scopes" onChange={e => this.handleChange(e)} required value={this.state.scopes} isInvalid={this.state.isValidated && (this.state.scopes === '' || this.state.scopes === undefined)}/>
+                                                    <Form.Control as="textarea" rows="3" name="scopes" onChange={e => this.handleChange(e)} required value={this.state.scopes} isInvalid={this.state.isValidated && (this.state.scopes === '' || this.state.scopes === undefined)} />
                                                     <Form.Control.Feedback type="invalid">
                                                         Please provide Scopes.
                                                     </Form.Control.Feedback>
@@ -372,29 +374,42 @@ class PublicHealthAuthority extends Component {
                                                     FHIR Server Base URL:
                                                 </Form.Label>
                                                 <Col sm={10}>
-                                                    <Form.Control type="text" placeholder="FHIR Server Base URL" name="fhirServerBaseURL" required onChange={e => this.handleChange(e)} value={this.state.fhirServerBaseURL} isInvalid={this.state.isValidated && (this.state.fhirServerBaseURL === '' || this.state.fhirServerBaseURL === undefined)}/>
+                                                    <Form.Control type="text" placeholder="FHIR Server Base URL" name="fhirServerBaseURL" required onChange={e => this.handleChange(e)} value={this.state.fhirServerBaseURL} isInvalid={this.state.isValidated && (this.state.fhirServerBaseURL === '' || this.state.fhirServerBaseURL === undefined)} />
                                                     <Form.Control.Feedback type="invalid">
                                                         Please provide a FHIR Server Base URL.
                                                     </Form.Control.Feedback>
                                                 </Col>
                                             </Form.Group>
 
-                                                <Form.Group as={Row} controlId="formHorizontalTokenURL">
+                                            <Form.Group as={Row} controlId="formHorizontalTokenURL">
+                                                <Form.Label column sm={2}>
+                                                    Token Endpoint:
+                                                </Form.Label>
+                                                <Col sm={10}>
+                                                    <Form.Control type="text" placeholder="Token Endpoint" name="tokenEndpoint" required={this.state.launchType === 'systemLaunch' ? true : false} onChange={e => this.handleChange(e)} value={this.state.tokenEndpoint} />
+
+                                                    <Form.Control.Feedback type="invalid">
+                                                        Please provide a FHIR Server Token URL.
+                                                    </Form.Control.Feedback>
+                                                </Col>
+                                            </Form.Group>
+                                            {this.state.authType === 'SofProvider' ? (
+                                                <Form.Group as={Row} controlId="formHorizontalKeystoreAlias">
                                                     <Form.Label column sm={2}>
-                                                        Token Endpoint:
+                                                        Keystore Alias :
                                                     </Form.Label>
                                                     <Col sm={10}>
-                                                        <Form.Control type="text" placeholder="Token Endpoint" name="tokenEndpoint" required={this.state.launchType === 'systemLaunch' ? true : false} onChange={e => this.handleChange(e)} value={this.state.tokenEndpoint} />
-
+                                                        <Form.Control type="text" placeholder="Keystore Alias" name="keystoreAlias" onChange={e => this.handleChange(e)} value={this.state.keystoreAlias} isInvalid={this.state.isValidated && (this.state.keystoreAlias === '' || this.state.keystoreAlias === undefined)} />
                                                         <Form.Control.Feedback type="invalid">
-                                                            Please provide a FHIR Server Token URL.
+                                                            Please provide Keystore Alias.
                                                         </Form.Control.Feedback>
                                                     </Col>
                                                 </Form.Group>
+                                            ) : ''}
                                         </Card.Body>
                                     </Accordion.Collapse>
                                 </Card>
-                                
+
                             </Accordion>
                             <Row>
                                 <Col className="text-center">
